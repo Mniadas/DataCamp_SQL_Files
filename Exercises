@@ -1,0 +1,91 @@
+### In this exercise, you will identify matches played between FC Schalke 04 and FC Bayern Munich. There are 2 teams identified in each match in the hometeam_id and awayteam_id columns, available to you in the filtered matches_germany table. ID can join to the team_api_id column in the teams_germany table, but you cannot perform a join on both at the same time.
+
+SELECT
+  team_long_name,
+  team_api_id
+FROM teams_germany
+WHERE team_long_name IN ('FC Schalke 04' , 'FC Bayern Munich');
+
+###In this exercise, you will be creating a list of matches in the 2011/2012 season where Barcelona was the home team. You will do this using a CASE statement that compares the values of two columns to create a new group -- wins, losses, and ties.
+
+SELECT
+  date,
+  CASE WHEN home_goal > away_goal THEN 'Home win!'
+       WHEN home_goal < away_goal THEN Home loss'
+       ELSE 'TIE' END AS outcome
+FROM mathces_spain; 
+
+###Similar to the previous exercise, you will construct a query to determine the outcome of Barcelona's matches where they played as the away team. You will learn how to combine these two queries in chapters 2 and 3.
+Did their performance differ from the matches where they were the home team?
+
+SELECT
+  m.date,
+  t.team_long_name AS opponent,
+  CASE WHEN m.home_goal < m.away_goal THEN 'Barcelona Win!'
+       WHEN m.home_goal > m.away_goal THEN 'Barcelona Loss'
+       ELSE 'TIE' END AS outcome
+FROM matches_spain AS m
+LEFT JOIN teams_spain AS t
+ON m.hometeam_id = t.team_api_id
+WHERE m.awayteam_id = 8634;
+  #NOTE: When Barcelona was the away team and identifying whether the game ended as a win, loss or tie. 
+
+###Barcelona and Real Madrid have been rival teams for more than 80 years. Matches between these two teams are given the name El Clásico (The Classic). In this exercise, you will query a list of matches played between these two rivals.
+#In this exercise, you will retrieve information about matches played between Barcelona (id = 8634) and Real Madrid (id = 8633). Note that the query you are provided with already identifies the Clásico matches using a filter in the WHERE clause.
+
+SELECT
+  date,
+  CASE WHEN hometown_id = 8634 THEN 'FC Barcelona'
+       ELSE 'Real Madrid CF' END AS home,
+  CASE WHEN awayteam_id = 8634 THEN 'FC Barcelona'
+       ELSE 'Real Madrid CF' END AS away
+FROM matches_spain
+WHERE (awayteam_id = 8634 OR hometeam_id = 8634)
+      AND (awayteam_id = 8633 OR hometeam_id = 8633); 
+  #NOTE: ID whether the home or away team is eithe: FC Barcelona or Real Madrid CF
+      
+###Construct the final CASE statement identifying who won each match. Note there are 3 possible outcomes, but 5 conditions that you need to identify.
+Fill in the logical operators to identify Barcelona or Real Madrid as the winner.
+
+SELECT 
+	date,
+	CASE WHEN hometeam_id = 8634 THEN 'FC Barcelona' 
+         ELSE 'Real Madrid CF' END as home,
+	CASE WHEN awayteam_id = 8634 THEN 'FC Barcelona' 
+         ELSE 'Real Madrid CF' END as away,
+	CASE WHEN home_goal > away_goal AND hometeam_id = 8634 THEN'Barcelona win!'
+        WHEN home_goal > away_goal AND hometeam_id = 8633 THEN 'Real Madrid win!'
+        WHEN home_goal < away_goal AND awayteam_id = 8634 THEN 'Barcelona win!'
+        WHEN home_goal < away_goal AND awayteam_id = 8633 THEN 'Real Madrid win!'
+        ELSE 'Tie!' END AS outcome
+FROM matches_spain
+WHERE (awayteam_id = 8634 OR hometeam_id = 8634)
+      AND (awayteam_id = 8633 OR hometeam_id = 8633);
+  #NOTE: Results where either you get Barcelona Win or Loss, Real Madrid Win or Loss, and ties.
+  
+###Identify Bologna's team ID listed in the teams_italy table by selecting the team_long_name and team_api_id.
+
+SELECT
+	team_api_id,
+	team_long_name
+FROM teams_italy
+WHERE team_long_name = 'Bologna';
+  #NOTE: Returns BOLOGNA AND TEAM API ID # = 9857 
+ 
+###Select the home_goal and away_goal for each match.
+Use the CASE statement in the WHERE clause to filter all NULL values
+
+SELECT 
+	season,
+	date,
+	home_goal,
+	away_goal
+FROM matches_italy
+WHERE
+	CASE WHEN hometeam_id = 9857 AND home_goal > away_goal THEN 'Bologna Win'
+         WHEN awayteam_id = 9857 AND away_goal > home_goal THEN 'Bologna Win' 
+         END IS NOT NULL;
+  #NOTE: Returns games Bologna win (Home and Away) and excludes NULL values 
+  
+
+
